@@ -1,0 +1,29 @@
+FROM tomsik68/xampp
+
+VOLUME /www
+
+WORKDIR /www
+
+#WORKDIR /opt/lampp/htdocs
+#WORKDIR /www
+
+#COPY . /opt/lampp/htdocs
+#COPY . /www
+
+# Update include_path in php.ini using sed
+#RUN sed -i 's|;include_path = ".:/php/includes"|include_path = ".:/opt/lampp/lib/php:/opt/lampp/htdocs"|g' /opt/lampp/etc/php.ini
+RUN sed -i 's|;include_path = ".:/php/includes"|include_path = ".:/opt/lampp/lib/php:/opt/lampp/htdocs:/opt/lampp/htdocs/www"|g' /opt/lampp/etc/php.ini
+
+# Install dependencies and move them to /js
+#RUN npm install && \
+    #mkdir js && \
+    #ln -s ./node_modules/jquery/dist/jquery.min.js ./js/jquery.min.js && \
+    #ln -s ./node_modules/popper.js/dist/umd/popper.min.js ./js/popper.min.js && \
+    #ln -s ./node_modules/bootstrap/dist/js/bootstrap.min.js ./js/bootstrap.min.js && \
+    #ln -s ./node_modules/ping.js/ping.min.js ./js/ping.min.js && \
+    #ln -s ./node_modules/moment/min/moment.min.js ./js/moment.min.js
+    #ln -s ./js/* ./*/js/
+
+EXPOSE 3306
+EXPOSE 22
+EXPOSE 80

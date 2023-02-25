@@ -1,0 +1,55 @@
+import QrScanner from 'node_modules/qr-scanner/qr-scanner.min.js'
+
+var video = document.getElementById('qr-video');
+
+if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    // Not adding `{ audio: true }` since we only want video now
+    navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+        //video.src = window.URL.createObjectURL(stream);
+        video.srcObject = stream;
+        video.play();
+    });
+}
+
+// Listen for form submission
+document.querySelector("#registration-form").addEventListener("submit", async (event) => {
+  event.preventDefault(); // Prevent default form submission
+
+  // Get form data
+  const formData = new FormData(event.target);
+
+  try {
+    // Scan the QR code
+    const qrCodeData = await qrScanner.scan();
+
+    // Parse the QR code data into JSON object
+    const qrCodeDataObj = JSON.parse(qrCodeData);
+
+    // Merge the form data and QR code data into a single object
+    const registrationData = {
+      ...Object.fromEntries(formData),
+      ...qrCodeDataObj,
+    };
+
+    // Send the registration data to the server
+    const response = await fetch("register.php", {
+      method: "POST",
+      body: JSON.stringify(registrationData),
+    });
+
+    if (response.ok) {
+      // Registration successful
+      alert("Registration successful!");
+    } else {
+      // Registration failed
+      alert("Registration failed!");
+    }
+  } catch (error) {
+    // Handle error while scanning QR code
+    console.error(error);
+    alert("Failed to scan QR code!");
+  }
+});
+
+// Initialize the QR scanner
+QrScanner.start();
