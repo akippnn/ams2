@@ -1,0 +1,9 @@
+version: '1.0'
+services:
+  ams2:
+    build: .
+    ports: 
+      - "41062:443"
+      - "41061:22"
+    volumes:
+      - "./ams2:/www"
