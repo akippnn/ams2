@@ -1,4 +1,4 @@
-FROM tomsik68/xampp
+FROM tomsik68/xampp:8
 
 # Install OpenSSL
 RUN apt-get update && \
@@ -23,6 +23,9 @@ RUN sed -i -e 's/#LoadModule ssl_module/LoadModule ssl_module/' \
 
 # Configure XAMPP to add include paths
 RUN sed -i 's|;include_path = ".:/php/includes"|include_path = ".:/opt/lampp/lib/php:/opt/lampp/htdocs:/opt/lampp/htdocs/www"|g' /opt/lampp/etc/php.ini
+
+# Apache to enable .htaccess override
+RUN sed -i 's/AllowOverride None/AllowOverride All/g' /opt/lampp/etc/httpd.conf 
 
 # Expose new ports
 EXPOSE 3306

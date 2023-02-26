@@ -1,14 +1,26 @@
 # Attendance Management System for School Staff
 
-Automatically manage student attendance.  
-This is a personal project done in a day, so some things tend to be hardcoded (such as ID limit).
+A web application to manage student attendance.
+
+This is a proof of concept for attendance management systems that users connected to the same network can use remotely.   
+
+This is only an experiment (for now), so local development environment, not recommended to use outside of testing purposes. If there is a need, changes can be made to make this application production-ready. For that, compatibility, security, performance and optimization need to be prioritized over adding new functionality. Since the groundwork is laid out, the amount of work needed for a production-ready application is minimal.  
+
 
 ## Components  
-- ~~QR Scanner~~ Does not work, potentially due to untrusted SSL certificates. I wasted hours only to realize browsers block camera requests without SSL certificate.   
-- Registration and Login system. (made manually)  
-- School Staff Dashboard. (also made manually)  
-- Attendance Interface. (also made manually)  
-- Applied some good cryptography practices. This is my best effort in cryptography in an hour or so.
+- ~~QR Scanner~~  
+  Does not work, potentially due to untrusted SSL certificates. I wasted hours only to realize browsers block camera requests without SSL certificate.   
+
+- Registration and Login system (made manually - done).  
+
+- Secure login with cryptography.  
+  Argon2i(d) support is removed because it is not compiled normally in XAMPP.
+
+- School Staff Dashboard (also made manually - wip).  
+
+- Attendance Interface (also made manually - planned).  
+
+- Automatically time out students (planned).  
 
 ## How to run
 > **Note**  
@@ -40,6 +52,9 @@ This is a personal project done in a day, so some things tend to be hardcoded (s
   <sup> If rebuilding, use `--build` flag.
 
 * **Open**  
+  > **Warning**  
+  > It is recommended that you read the **How to setup** section before using the website.
+
   http://localhost:41062/www
 
 * **Stop**  
@@ -52,17 +67,60 @@ This is a personal project done in a day, so some things tend to be hardcoded (s
   Then, you may remove any unneeded images (or uninstall Docker) and delete the cloned repository.
 
 ## How to setup
-> **Note**  
-> This is for a testing environment case only. If there is a need, documentation on a production-ready site will be published.
 
 * **To access phpMyAdmin**  
   https://localhost:41062/phpmyadmin  
-  <sup>Here, you can set up the user privileges as well.
+  You can set up the database here (which is needed). You can also set up user privileges here as well.
 
-* **Create a database**  
+* **Installing needed fonts**  
+  The website uses `Roboto` and `FontAwesome` as fonts (and icons).
+  You can download and install them automatically by using `install_fonts.sh` in this repository. 
+
+* **To create needed databases**  
   ```sql
-  CREATE TABLE `ams2`.`users` (`id_num` INT NOT NULL , `frst_name` TEXT NOT NULL , `last_name` TEXT NOT NULL , `password` VARCHAR(128) NOT NULL ) ENGINE = InnoDB; 
+  USE ams2;
+
+  CREATE TABLE users (
+    user_id INT NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    hash VARCHAR(255) NOT NULL,
+    salt VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id)
+  ) ENGINE=InnoDB;
+
+  CREATE TABLE students (
+    user_id INT NOT NULL,
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    created_by INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id),
+    FOREIGN KEY (created_by) REFERENCES users(user_id)
+  ) ENGINE=InnoDB;
+
+  CREATE TABLE attendances (
+    user_id INT NOT NULL,
+    time_in_out ENUM('in', 'out') NOT NULL,
+    complete_datetime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_by INT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, time_in_out, complete_datetime),
+    FOREIGN KEY (user_id) REFERENCES students(user_id),
+    FOREIGN KEY (created_by) REFERENCES users(user_id)
+  ) ENGINE=InnoDB;
+
+  CREATE TABLE sessions (
+    session_id INT NOT NULL AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    token VARCHAR(64) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (session_id),
+    UNIQUE KEY (token),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+  ) ENGINE=InnoDB;
   ```
-  ```sql
-  CREATE TABLE `ams2`.`students` (`id_num` INT NOT NULL , `first_name` TEXT NOT NULL , `last_name` TEXT NOT NULL ) ENGINE = InnoDB;
-  ```
+
+* **Configuration**  
+  You can configure some aspects of this project, including the database used, cryptography hash parameters, and registration ID digit conditions in `config.php`.
