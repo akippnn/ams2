@@ -1,9 +1,5 @@
 <?php
-include_once "main.php"
-
-if (isset($_POST['logout'])) {
-    logout();
-}
+include_once "main.php";
 ?>
 <!DOCTYPE html>
 <html>
@@ -61,12 +57,18 @@ if (isset($_POST['logout'])) {
         <ul class="navbar-nav me-auto">
         </ul>
         <li class="nav-item dropdown">
-            <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fa fa-user"></i> <?php echo $_SESSION['user_id'] ?>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#" id="logout">Log Out</a></li>
-            </ul>
+                <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-user"></i> <?php if (is_logged_in()) { echo $_SESSION['user_id']; } ?>
+                </button>
+            <?php if (is_logged_in()): ?>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#" id="logout">Log Out</a></li>
+                </ul>
+            <?php else: ?>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="login.php" id="login">Log In</a></li>
+                </ul>
+            <?php endif; ?>
         </li>
     </div>
   </div>

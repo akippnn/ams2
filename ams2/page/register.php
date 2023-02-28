@@ -11,13 +11,13 @@
     <script type="module" src="../js/register.js"></script>
     <div class="container position-absolute top-50 start-50 translate-middle">
         <?php if (!empty($success)): ?>
-            <div class="alert alert-success" role="alert">
-                <ul>
-                    <?php foreach ($success as $s): ?>
-                        <li><?php echo $s; ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div> <?php endif; ?>
+        <div class="alert alert-success" role="alert">
+            <ul>
+                <?php foreach ($success as $s): ?>
+                    <li><?php echo $s; ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div> <?php endif; ?>
         <?php if (!empty($err)): ?>
         <div class="alert alert-danger" role="alert">
             <ul>
@@ -57,11 +57,11 @@
                             <label for="inputPassword6" class="col-form-label">Password</label>
                         </div>
                         <div class="col-auto">
-                            <input type="password" id="password" name="password" class="form-control" aria-describedby="passwordHelpInline" text-wrap>
+                            <input type="password" id="password" name="password" class="form-control" aria-describedby="passwordHelpInline" text-wrap novalidate>
                         </div>
                         <div class="col-auto">
                             <span id="passwordHelpInline" class="form-text">
-                                Choose a good password.
+                                Use a memorable and secure password.
                             </span>
                         </div>
                     </div>
@@ -73,19 +73,21 @@
 </body>
 </html>
 <script>
-const passwordGroup = document.querySelector('.password-group')
-const passwordInput = document.querySelector('#password')
-const schoolStaffCheckbox = document.querySelector('#school_staff')
+const passwordGroup = document.querySelector('.password-group');
+const passwordInput = document.querySelector('#password');
+const schoolStaffCheckbox = document.querySelector('#school_staff');
 if (schoolStaffCheckbox) {
     schoolStaffCheckbox.addEventListener('change', function() {
         if (this.checked) {
-            passwordGroup.classList.add('visible')
-            passwordInput.setAttribute('required', true)
+            passwordGroup.classList.add('visible');
+            passwordInput.removeAttribute('novalidate');
+            passwordInput.setAttribute('required', true);
         } else {
-            passwordGroup.classList.remove('visible')
-            passwordInput.setAttribute('required', true)
+            passwordGroup.classList.remove('visible');
+            passwordInput.setAttribute('novalidate', true);
+            passwordInput.removeAttribute('required');
         }
-    })
+    });
 }
 </script>
 <style>

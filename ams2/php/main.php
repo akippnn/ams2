@@ -25,17 +25,20 @@ function is_logged_in() {
 
 function verify_user_id() {
     if (is_logged_in()) {
+        $session_id = session_id();
         $pdo = fetchPDO();
         $stmt = $pdo->prepare("SELECT user_id FROM sessions WHERE session_id = :session_id AND token = :token");
-        $stmt->bindParam(':session_id', session_id());
+        $stmt->bindParam(':session_id', $session_id);
         $stmt->bindParam(':token', $_SESSION['token']);
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         if (is_array($row)) {
+            var_dump($row);
             return $row['user_id'];
         }
+    } else {
+        return null;
     }
-    return null;
 }
 
 // Will be added in the future
@@ -58,11 +61,12 @@ function logout() {
     var_dump("yes");
     if (is_logged_in()) {
         $pdo = fetchPDO();
-        $stmt = $pdo->prepare("DELETE FROM sessions WHERE session_id = :session_id AND token = :token");
-        $stmt->bindParam(':session_id', session_id());
+        $stmt = $pdo->prepare("DELETE FROM sessions WHERE token = :token");
         $stmt->bindParam(':token', $_SESSION['token']);
         $stmt->execute();
+        unset($_SESSION['user_id']);
         unset($_SESSION['token']);
+        session_destroy();
     }
 }
 

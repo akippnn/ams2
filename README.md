@@ -14,7 +14,7 @@ This is only an experiment (for now), so local development environment, not reco
 - Registration and Login system (made manually - done).  
 
 - Secure login with cryptography.  
-  Argon2i(d) support is removed because it is not compiled normally in XAMPP.
+  Argon2i(d) support is removed because it does not come compiled with XAMPP's Apache.
 
 - School Staff Dashboard (also made manually - wip).  
 
@@ -22,10 +22,13 @@ This is only an experiment (for now), so local development environment, not reco
 
 - Automatically time out students (planned).  
 
+## Version updates
+Since this is an experimental build, updates can break an existing session. It is recommended to destroy existing containers and setup again (as well as re-reading the README). Use `docker compose down` to do so.
+
 ## How to run
 > **Note**  
 > The working directory should be the root of this project.  
-> This is only a README on how to run this project as intended.  
+> Please read the instructions properly, as the project needs to work with all the components in place.
 
 * **Requirements**  
   - Docker Engine
@@ -33,17 +36,12 @@ This is only an experiment (for now), so local development environment, not reco
   - npm or yarn
 
 * **Install**  
-  While inside the `ams2` repostory, `cd` into the `ams2` app:
   ```pwsh
+  $ basename "$(pwd)"
+  # Should output ams2, if not then cd into the cloned repository first.
   $ cd ams2
   ```
-  Then install
-  ```pwsh
-  # npm
-  $ npm install
-  # yarn
-  $ yarn install
-  ```
+  Then install with `npm install` or `yarn`.
 
 * **Build and run**  
   ```pwsh
@@ -52,10 +50,9 @@ This is only an experiment (for now), so local development environment, not reco
   <sup> If rebuilding, use `--build` flag.
 
 * **Open**  
+  https://localhost:41062/www
   > **Warning**  
-  > It is recommended that you read the **How to setup** section before using the website.
-
-  http://localhost:41062/www
+  > It is recommended that you read the **How to setup** section before using the website in order to create required databases.
 
 * **Stop**  
   Use `CTRL-C` or `docker ps` to find the name, and `docker kill <name>`
@@ -76,7 +73,7 @@ This is only an experiment (for now), so local development environment, not reco
   The website uses `Roboto` and `FontAwesome` as fonts (and icons).
   You can download and install them automatically by using `install_fonts.sh` in this repository. 
 
-* **To create needed databases**  
+* **To create required databases**  
   ```sql
   USE ams2;
 
@@ -84,8 +81,10 @@ This is only an experiment (for now), so local development environment, not reco
     user_id INT NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
-    hash VARCHAR(255) NOT NULL,
-    salt VARCHAR(255) NOT NULL,
+    hash VARCHAR(128) NOT NULL,
+    -- bcrypt uses 60 characters, but if using Argon2i (usually 96 characters or more) then setting VARCHAR(192) may be sufficient
+    salt VARCHAR(64) NOT NULL,
+    -- bin2hex(random_bytes(32)) max length is 64 characters
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id)
   ) ENGINE=InnoDB;
@@ -95,7 +94,7 @@ This is only an experiment (for now), so local development environment, not reco
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     created_by INT NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id),
     FOREIGN KEY (created_by) REFERENCES users(user_id)
   ) ENGINE=InnoDB;
@@ -112,7 +111,8 @@ This is only an experiment (for now), so local development environment, not reco
   ) ENGINE=InnoDB;
 
   CREATE TABLE sessions (
-    session_id INT NOT NULL AUTO_INCREMENT,
+    session_id VARCHAR(32) NOT NULL,
+    -- default md5 algorithm max length is 32 characters
     user_id INT NOT NULL,
     token VARCHAR(64) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -120,7 +120,6 @@ This is only an experiment (for now), so local development environment, not reco
     UNIQUE KEY (token),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
   ) ENGINE=InnoDB;
-  ```
 
 * **Configuration**  
   You can configure some aspects of this project, including the database used, cryptography hash parameters, and registration ID digit conditions in `config.php`.

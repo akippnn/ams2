@@ -10,14 +10,15 @@ define('DB_NAME', 'ams2');
 
 /* Feel free to change the function for a different use case */
 function user_id_check($returnmsg, $val) {
-    if ($returnmsg) {
-        return "ID number must have 9 digits.";
-    }
-    if (strlen($val) != 9) {
-        return TRUE; // Return TRUE if the user's input is incorrect 
-    } else {
-        return FALSE ;
-    }
+    #if ($returnmsg) {
+        #return "ID number must have 9 digits.";
+    #}
+    #if (strlen($val) != 9) {
+        #return FALSE; // Return FALSE if the user's input is incorrect 
+    #} else {
+        #return TRUE;
+    #}
+    return TRUE;
 }
 
 /* Feel free to change Argon2i parameters */
@@ -43,21 +44,18 @@ function isPasswordSecure($password) {
     }
     elseif($password_length > 64) {
         $error_message .= "Password cannot be more than 64 characters long. ";
-    } else {
-        // Nesting this inside else means this will only execute if password
-        // length is satisfactory, but the password itself may not be secure.
-        if(!preg_match('/[a-z]/', $password)) {
-        $error_message .= "Password must contain at least one lowercase letter. ";
-        }
-        if(!preg_match('/[A-Z]/', $password)) {
-            $error_message .= "Password must contain at least one uppercase letter. ";
-        }
-        if(!preg_match('/\d/', $password)) {
-            $error_message .= "Password must contain at least one number. ";
-        }
-        if(!preg_match('/[_\W]/', $password)) {
-            $error_message .= "Password must contain at least one special character. ";
-        }
+    }
+    if(!preg_match('/[a-z]/', $password)) {
+    $error_message .= "Password must contain at least one lowercase letter. ";
+    }
+    if(!preg_match('/[A-Z]/', $password)) {
+        $error_message .= "Password must contain at least one uppercase letter. ";
+    }
+    if(!preg_match('/\d/', $password)) {
+        $error_message .= "Password must contain at least one number. ";
+    }
+    if(!preg_match('/[_\W]/', $password)) {
+        $error_message .= "Password must contain at least one special character. ";
     }
     if($error_message !== "") {
         // Not returning TRUE indicates the password is not secure (hence the

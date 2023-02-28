@@ -22,17 +22,12 @@ $err = array();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdo = fetchPDO();
-    foreach (['user_id', 'first_name', 'last_name'] as $item) {
-        $name = str_replace('_', ' ', $item);
-        if (notEmpty($_POST[$item])) {
-            $$item = $_POST[$item];
-        } else {
-            array_push($err, "Please enter the $name field.");
-        }
-    }
 
+    foreach (['user_id', 'first_name', 'last_name'] as $item) {
+        $$item = $_POST[$item];
+    }
     $school_staff = isset($_POST['school_staff']) ? TRUE : FALSE;
-    $password = '';
+
     if ($school_staff) {
         $password_check = isPasswordSecure($_POST['password']);
         if ($password_check === TRUE) {
@@ -40,6 +35,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             array_push($err, $password_check);
         }
+    } else {
+        $password = '';
+        $created_by = verify_user_id();
     }
  
     /* Validate ID Number */
@@ -49,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         array_unshift($err, "ID number must be numeric.");
     } elseif (empty($user_id)) {
         array_unshift($err, "ID number cannot be empty.");
-    } elseif (user_id_check(FALSE, $user_id)) {
+    } elseif (!(user_id_check(FALSE, $user_id))) {
         array_unshift($err, user_id_check(TRUE, $user_id));
     } else {
         $user_id = ltrim($user_id, '0');
@@ -72,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($school_staff) { 
             $stmt->execute([$user_id, $first_name, $last_name, $password['hash'], $password['salt']]);
         } else {
-            $stmt->execute([$user_id, $first_name, $last_name, $param_created_by]);
+            $stmt->execute([$user_id, $first_name, $last_name, $created_by]);
         }
             
         if ($stmt->rowCount() > 0) {
