@@ -1,4 +1,4 @@
-# Attendance Management System for School Staff
+# Attendance Management System Webapp
 
 A web application to manage student attendance.
 
@@ -11,16 +11,16 @@ This is only an experiment (for now), so local development environment, not reco
 - ~~QR Scanner~~  
   Does not work, potentially due to untrusted SSL certificates. I wasted hours only to realize browsers block camera requests without SSL certificate.   
 
-- Registration and Login system (made manually - done).  
+- Registration and Login System (done).  
 
-- Secure login with cryptography.  
+- Secure Login with Cryptography (done).  
   Argon2i(d) support is removed because it does not come compiled with XAMPP's Apache.
 
-- School Staff Dashboard (also made manually - wip).  
+- School Staff Dashboard (wip).  
 
-- Attendance Interface (also made manually - planned).  
+- Attendance Interface (planned).  
 
-- Automatically time out students (planned).  
+- Automatically Time-out Students (planned).  
 
 ## Version updates
 Since this is an experimental build, updates can break an existing session. It is recommended to destroy existing containers and setup again (as well as re-reading the README). Use `docker compose down` to do so.
