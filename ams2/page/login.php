@@ -17,21 +17,21 @@ if(is_logged_in()) {
     <div class="container position-absolute top-50 start-50 translate-middle">
         <div class="form-wrapper">
             <?php if (!empty($success)): ?>
-                <div class="alert alert-success" role="alert">
-                    <ul>
-                        <?php foreach ($success as $s): ?>
-                            <li><?php echo $s; ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div> <?php endif; ?>
+            <div class="alert alert-success" role="alert">
+                <ul>
+                    <?php foreach ($success as $s): ?>
+                        <li><?php echo $s; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div> <?php endif; ?>
             <?php if (!empty($err)): ?>
-                <div class="alert alert-danger" role="alert">
-                    <ul>
-                        <?php foreach ($err as $e): ?>
-                            <li><?php echo $e; ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div> <?php endif; ?>
+            <div class="alert alert-danger" role="alert">
+                <ul>
+                    <?php foreach ($err as $e): ?>
+                        <li><?php echo $e; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div> <?php endif; ?>
             <h2><b>Login</b></h2><br>
             <form action="login.php" method="POST">
                 <div class="form-floating">

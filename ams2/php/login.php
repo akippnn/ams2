@@ -6,6 +6,7 @@ $err = array();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $pdo = fetchPDO();
+    $session_id = session_id();
     $user_id = ltrim($_POST['user_id'], '0');
     $password = $_POST['password'];
 
@@ -22,7 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             session_regenerate_id(true);
             $token = bin2hex(random_bytes(32));
             
-            $stmt = $pdo->prepare("INSERT INTO sessions (user_id, token) VALUES (:user_id, :token)");
+            $stmt = $pdo->prepare("INSERT INTO sessions (session_id, user_id, token) VALUES (:session_id, :user_id, :token)");
+            $stmt->bindParam(':session_id', $session_id);
             $stmt->bindParam(':user_id', $user_id);
             $stmt->bindParam(':token', $token);
             $stmt->execute();
