@@ -1,10 +1,10 @@
 <?php
 session_start();
-require_once "header.php";
-require_once "../config.php";
+require_once "php/includes/header.php";
+require_once "config.php";
 
-/* Initiate a PHP Data Object instance */
 function fetchPDO() {
+    // Initiate a PHP Data Object instance
     try {
         $dsn = "mysql:host=" . DB_SERVER . ";dbname=" . DB_NAME;
         $pdo = new PDO($dsn, DB_USERNAME, DB_PASSWORD);
@@ -19,25 +19,25 @@ function fetchPDO() {
 */
 
 function is_logged_in() {
-    return isset($_SESSION['token']);
+    return isset($_SESSION['user_id']);
 }
 
-
 function verify_user_id() {
-    if (is_logged_in()) {
-        $session_id = session_id();
-        $pdo = fetchPDO();
-        $stmt = $pdo->prepare("SELECT user_id FROM sessions WHERE session_id = :session_id AND token = :token");
-        $stmt->bindParam(':session_id', $session_id);
-        $stmt->bindParam(':token', $_SESSION['token']);
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if (is_array($row)) {
-            var_dump($row);
-            return $row['user_id'];
-        }
-    } else {
+    if (!is_logged_in()) {
         return null;
+    }
+    $session_id = session_id();
+    $pdo = fetchPDO();
+    $stmt = $pdo->prepare("SELECT user_id FROM sessions WHERE session_id = :session_id AND token = :token");
+    $stmt->bindParam(':session_id', $session_id);
+    $stmt->bindParam(':token', $_SESSION['token']);
+    var_dump($session_id);
+    var_dump($_SESSION['token']);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (is_array($row)) {
+        var_dump($row);
+        return $row['user_id'];
     }
 }
 
@@ -70,10 +70,11 @@ function logout() {
     }
 }
 
-#if (basename($_SERVER['PHP_SELF']) !== 'login.php') {
-    #if (!is_logged_in()) {
-        #// Redirect to login page
-        #header('Location: login.php');
-        #exit();
-    #}
-#}
+// Use when not testing
+//if (basename($_SERVER['PHP_SELF']) !== 'login.php') {
+    //if (!is_logged_in()) {
+        //// Redirect to login page
+        //header('Location: login.php');
+        //exit();
+    //}
+//}
