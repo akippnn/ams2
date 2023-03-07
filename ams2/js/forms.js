@@ -5,21 +5,18 @@ function submitForm() {
   var formData = new FormData(document.getElementById("myForm"));
 
   var xhr = new XMLHttpRequest();
-  xhr.open("POST", "php/register.php");
+  xhr.open("POST", "php/register.php", true);
+  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
   xhr.onreadystatechange = function() {
-    if (xhr.readyState === XMLHttpRequest.DONE) {
-      if (xhr.status === 200) {
-        console.log(xhr.responseText);
-      } else {
-        console.log(xhr.responseText);
-      }
-    }
-  }
+    if(xhr.readyState == 4 && xhr.status == 200) {
+      console.log(this.responseText);
+    };
+  };
   xhr.send(formData);
-}
+};
 
 document.getElementById("myForm").addEventListener("submit", event => {
-  console.log("pressed")
+  console.log("pressed");
   event.preventDefault();
   submitForm();
 });
