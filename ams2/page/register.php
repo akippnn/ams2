@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
 </head>
 <body>
-    <script type="module" src="../js/register.js"></script>
+    <script type="module" src="../js/forms.js"></script>
     <div class="container position-absolute top-50 start-50 translate-middle">
         <?php if (!empty($success)): ?>
         <div class="alert alert-success" role="alert">
@@ -27,7 +27,7 @@
             </ul>
         </div> <?php endif; ?>
         <h2><b>Registration Form</b></h2><br>
-        <form action="register.php" method="POST" class="needs-validation" novalidate>
+        <form id="myForm" action="register.php" method="POST" class="needs-validation" target="hiddenFrame" novalidate>
             <div class="form-floating">
                 <input class="form-control" type="text" name="user_id" id="user_id" placeholder="000012345" required>
                 <label for="user_id">ID Number</label>
@@ -44,8 +44,8 @@
                 <div class="invalid-feedback">Please enter your last name.</div>
             </div>
             <div class="form-group">
-                <input class="form-check-input" type="checkbox" name="school_staff" id="school_staff" value="yes">
-                <label class="form-check-label" for="school_staff">Is a school staff</label>
+                <input class="form-check-input" type="checkbox" name="reg_authorized" id="reg_authorized" value="yes">
+                <label class="form-check-label" for="reg_authorized">Is a school staff</label>
             </div>
             <div class="password-group">
                 <div class="form-floating" id="password-input">
@@ -69,13 +69,14 @@
             </div>
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
+        <iframe name="hiddenFrame" style="display:none;"></iframe>
     </div>
 </body>
 </html>
 <script>
 const passwordGroup = document.querySelector('.password-group');
 const passwordInput = document.querySelector('#password');
-const schoolStaffCheckbox = document.querySelector('#school_staff');
+const schoolStaffCheckbox = document.querySelector('#reg_authorized');
 if (schoolStaffCheckbox) {
     schoolStaffCheckbox.addEventListener('change', function() {
         if (this.checked) {

@@ -13,7 +13,7 @@ if(is_logged_in()) {
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
 </head>
 <body>
-    <script type="module" src="../js/login.js"></script>
+    <script type="module" src="../js/forms.js"></script>
     <div class="container position-absolute top-50 start-50 translate-middle">
         <div class="form-wrapper">
             <?php if (!empty($success)): ?>
